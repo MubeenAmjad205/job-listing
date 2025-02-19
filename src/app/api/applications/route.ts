@@ -123,7 +123,7 @@ export async function POST(req: Request) {
       data: {
         userName: fullName.toString(),
         email: email.toString(),
-        jobTitle: job?.title, // the tyoe is changed from inside ....
+        jobTitle: job?.title??"", // the tyoe is changed from inside ....
         jobId: parseInt(jobId.toString(), 10),
         userId: session.user.id,
         resume: cloudinaryResponse.secure_url,
