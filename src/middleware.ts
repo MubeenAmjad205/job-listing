@@ -47,7 +47,7 @@ export const config = {
     '/api/create',
     '/user/dashboard',
     '/admin/dashboard',
-    '/jobs',
+    '/jobs/',
     '/api/update',
   ],
 };
