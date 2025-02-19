@@ -1,3 +1,5 @@
+// src/pages/jobs/index.tsx
+
 'use client';
 
 import React from 'react';
@@ -5,14 +7,15 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Link from 'next/link';
 import { Job } from '@/types';
+import { FiChevronRight } from 'react-icons/fi';
 
 const fetchJobs = async (): Promise<Job[]> => {
-  const response = await axios.get('/api/jobs');
-  return response.data;
+  const { data } = await axios.get<Job[]>('/api/jobs');
+  return data;
 };
 
-const JobListingPage = () => {
-  const { data, isLoading, error } = useQuery<Job[]>({
+const JobListingPage: React.FC = () => {
+  const { data: jobs, isLoading, isError } = useQuery<Job[]>({
     queryKey: ['jobs'],
     queryFn: fetchJobs,
   });
@@ -21,31 +24,40 @@ const JobListingPage = () => {
     return <div className="text-center py-8">Loading jobs...</div>;
   }
 
-  if (error) {
-    return <div className="text-center py-8 text-red-500">Error loading jobs.</div>;
+  if (isError) {
+    return (
+      <div className="text-center py-8 text-red-500">
+        Error loading jobs.
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen p-8 bg-gradient-to-br from-blue-100 to-purple-200">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">Job Listings</h1>
-        <div className="grid grid-cols-1 gap-6">
-          {data?.map(job => (
+    <div className="min-h-screen p-8 bg-gradient-to-br from-indigo-100 to-pink-100">
+      <div className="max-w-5xl mx-auto">
+        <h1 className="text-5xl font-extrabold text-center mb-12 text-gray-800">
+          Explore Opportunities
+        </h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {jobs?.map((job) => (
             <div
               key={job.id}
-              className="p-6 bg-white rounded-xl shadow-md flex justify-between items-center border border-gray-200 hover:shadow-xl transition-shadow duration-300"
+              className="p-6 bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-2xl transition-shadow duration-300"
             >
-              <div>
-                <h2 className="text-2xl font-semibold text-gray-800">{job.title}</h2>
-                {job.description && (
-                  <p className="text-gray-600 mt-2">{job.description}</p>
-                )}
+              <div className="flex flex-col h-full">
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                  {job.title}
+                </h2>
+                <p className="text-gray-600 mb-4">{job.company}</p>
+                <p className="text-gray-500 mb-6">{job.location}</p>
+                <div className="mt-auto">
+                  <Link href={`/jobs/${job.id}`}>
+                    <p className="text-indigo-600 hover:text-indigo-800 flex items-center">
+                      View Details <FiChevronRight className="ml-1" />
+                    </p>
+                  </Link>
+                </div>
               </div>
-              <Link href={`/jobs/${job.id}/apply`}>
-                <button className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
-                  Apply
-                </button>
-              </Link>
             </div>
           ))}
         </div>

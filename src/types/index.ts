@@ -21,14 +21,8 @@ export interface UserSession {
     id: number;
     jobTitle: string;
     status: 'pending' | 'accepted' | 'rejected';
-    // Add additional fields like appliedDate, etc., as needed.
   }
-  // types/index.ts
-export interface Job {
-  id: number;
-  title: string;
-  description?: string;
-}
+
 
 export interface Application {
   id: number;
@@ -51,3 +45,12 @@ declare module 'iron-session' {
         };  
     }  
 }  
+export interface Job {
+  id: string;
+  title: string;
+  description?: string;
+  company?: string;
+  location?: string;
+  salary?: string;
+  postedAt?: string;
+}
