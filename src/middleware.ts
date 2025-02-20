@@ -38,10 +38,10 @@ export const config = {
     '/api/auth/logout',
     '/user/dashboard',
     '/admin/dashboard',
-    'api/jobs/**',
+    '/api/jobs/**',
     'api/applications/**',
     '/jobs/[id]/apply',
     '/jobs/[id]/edit',
-    
+
   ],
 };
