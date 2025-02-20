@@ -39,7 +39,7 @@ export const config = {
     '/user/dashboard',
     '/admin/dashboard',
     '/api/jobs/**',
-    'api/applications/**',
+    '/api/applications/**',
     '/jobs/[id]/apply',
     '/jobs/[id]/edit',
 
