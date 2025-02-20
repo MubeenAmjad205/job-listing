@@ -7,6 +7,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter, useParams } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface ApplicationFormInputs {
   fullName: string;
@@ -15,21 +16,18 @@ interface ApplicationFormInputs {
   resume: FileList;
 }
 
-const ApplicationForm = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<ApplicationFormInputs>();
-
+ function ApplicationForm() {
+  const { register, handleSubmit, formState: { errors } } = useForm<ApplicationFormInputs>();
   const router = useRouter();
   const params = useParams();
   const { user } = useUser();
+  const queryClient = useQueryClient();
 
   const jobId = params.jobId as string;
 
-  const onSubmit = async (data: ApplicationFormInputs) => {
-    try {
+  // Define a mutation to submit the application using the new object syntax
+  const mutation = useMutation({
+    mutationFn: async (data: ApplicationFormInputs) => {
       const formData = new FormData();
       formData.append('jobId', jobId);
       formData.append('fullName', data.fullName);
@@ -45,17 +43,25 @@ const ApplicationForm = () => {
           'Content-Type': 'multipart/form-data',
         },
       });
-
-      if (response.data.success) {
-        toast.success('Application submitted successfully!');
-        router.push('/dashboard/user');
-      }
-    } catch (error: unknown) {
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success('Application submitted successfully!', { hideProgressBar: true });
+      // Invalidate any queries if needed (e.g. if dashboard or application list uses them)
+      queryClient.invalidateQueries({
+        queryKey: ['applications']
+      });
+      router.push('/dashboard/user');
+    },
+    onError: (error: unknown) => {
       const err = error as AxiosError<{ error: string }>;
-      const errorMsg =
-        err.response?.data?.error || 'Failed to submit application.';
-      toast.error(errorMsg);
-    }
+      const errorMsg = err.response?.data?.error || 'Failed to submit application.';
+      toast.error(errorMsg, { hideProgressBar: true });
+    },
+  });
+
+  const onSubmit = (data: ApplicationFormInputs) => {
+    mutation.mutate(data);
   };
 
   return (
@@ -70,7 +76,7 @@ const ApplicationForm = () => {
           </label>
           <input
             {...register('fullName', { required: 'Full name is required' })}
-            defaultValue={user?.name} 
+            defaultValue={user?.name}
             className="mt-1 block w-full border border-gray-300 rounded-md p-3 focus:ring-indigo-500 focus:border-indigo-500"
           />
           {errors.fullName && (
@@ -86,7 +92,7 @@ const ApplicationForm = () => {
           <input
             type="email"
             {...register('email', { required: 'Email is required' })}
-            defaultValue={user?.email} 
+            defaultValue={user?.email}
             className="mt-1 block w-full border border-gray-300 rounded-md p-3 focus:ring-indigo-500 focus:border-indigo-500"
           />
           {errors.email && (
@@ -129,14 +135,15 @@ const ApplicationForm = () => {
         </div>
         <button
           type="submit"
-          className="w-full py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition"
+          className={`${mutation.isPending?'cursor-not-allowed':null}  w-full py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition`}
+          disabled={mutation.isPending}
         >
-          Submit Application
+          {mutation.isPending?'Submit Application...':'Submit Application'}
         </button>
       </form>
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
     </div>
   );
-};
+}
 
 export default ApplicationForm;
