@@ -5,9 +5,11 @@ import Link from 'next/link';
 import { signIn, signOut } from 'next-auth/react';
 import { FaGithub, FaEnvelope } from 'react-icons/fa';
 import { useUser } from '@/context/UserContext';
+import { useRouter } from 'next/navigation';
 
 const HomePage = () => {
   const { user } = useUser();
+  const router = useRouter ();
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -21,13 +23,13 @@ const HomePage = () => {
           {!user ? (
             <div className="space-x-4">
               <button
-                onClick={() => signIn()}
+                onClick={() => {router.push('/auth/login')}}
                 className="bg-white text-blue-600 font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-gray-100 transition duration-300"
               >
                 Log In
               </button>
               <Link
-                href="/signup"
+                href="/auth/register"
                 className="bg-white text-blue-600 font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-gray-100 transition duration-300 inline-block"
               >
                 Sign Up
