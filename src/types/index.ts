@@ -1,4 +1,3 @@
-// /src/types/index.ts
 import 'iron-session';
 
 
@@ -31,7 +30,7 @@ export interface Application {
   userName: string;
   email: string;
   coverLetter: string;
-  resume: string; // Filename or URL
+  resume: string;
   status: 'pending' | 'accepted' | 'rejected';
 }
 
@@ -46,11 +45,12 @@ declare module 'iron-session' {
     }  
 }  
 export interface Job {
-  id: string;
+  id: string|number;
   title: string;
   description?: string;
   company?: string;
   location?: string;
+  category?:string;
   salary?: string;
   postedAt?: string;
 }

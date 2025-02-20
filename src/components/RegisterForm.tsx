@@ -1,4 +1,3 @@
-// components/RegisterForm.tsx
 'use client';
 
 import React from 'react';
@@ -67,7 +66,7 @@ const RegisterForm = () => {
           <input
             type="text"
             {...register("name")}
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring focus:ring-blue-200"
+            className="mt-1 block text-gray-700 w-full border border-gray-300 rounded-md p-2 focus:ring focus:ring-blue-200"
           />
           {errors.name && (
             <p className="text-red-500 text-sm">{errors.name.message}</p>
@@ -80,7 +79,7 @@ const RegisterForm = () => {
           <input
             type="email"
             {...register("email")}
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring focus:ring-blue-200"
+            className="mt-1 text-gray-700 block w-full border border-gray-300 rounded-md p-2 focus:ring focus:ring-blue-200"
           />
           {errors.email && (
             <p className="text-red-500 text-sm">{errors.email.message}</p>
@@ -93,7 +92,7 @@ const RegisterForm = () => {
           <input
             type="password"
             {...register("password")}
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring focus:ring-blue-200"
+            className="mt-1 text-gray-700 block w-full border border-gray-300 rounded-md p-2 focus:ring focus:ring-blue-200"
           />
           {errors.password && (
             <p className="text-red-500 text-sm">{errors.password.message}</p>

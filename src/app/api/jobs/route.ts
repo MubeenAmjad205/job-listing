@@ -1,4 +1,3 @@
-// app/api/jobs/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getIronSession } from "iron-session";
 import {prisma} from "@/lib/prisma";

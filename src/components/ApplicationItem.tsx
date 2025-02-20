@@ -1,4 +1,3 @@
-// components/ApplicationItem.tsx
 'use client';
 
 import React from 'react';

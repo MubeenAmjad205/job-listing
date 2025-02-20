@@ -1,4 +1,3 @@
-// components/LoginForm.tsx
 'use client';
 
 import React from 'react';
@@ -65,7 +64,7 @@ const LoginForm = () => {
             type="email"
             id="email"
             {...register("email")}
-            className="mt-1 block w-full border border-gray-300 rounded-md p-3 focus:ring-indigo-500 focus:border-indigo-500"
+            className="mt-1 block w-full border text-gray-700 border-gray-300 rounded-md p-3 focus:ring-indigo-500 focus:border-indigo-500"
           />
           {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>}
         </div>
@@ -75,14 +74,14 @@ const LoginForm = () => {
             type="password"
             id="password"
             {...register("password")}
-            className="mt-1 block w-full border border-gray-300 rounded-md p-3 focus:ring-indigo-500 focus:border-indigo-500"
+            className="mt-1 block w-full text-gray-700 border border-gray-300 rounded-md p-3 focus:ring-indigo-500 focus:border-indigo-500"
           />
           {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>}
         </div>
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full flex items-center justify-center px-4 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition"
+          className="w-full  flex items-center justify-center px-4 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition"
         >
           <FaSignInAlt className="mr-2" />
           {isSubmitting ? "Logging in..." : "Login"}

@@ -1,4 +1,3 @@
-// components/ApplicationsList.tsx
 'use client';
 
 import React from 'react';
@@ -9,7 +8,7 @@ import { Application } from '@/types';
 
 const fetchApplications = async (): Promise<Application[]> => {
   // Replace with your actual API endpoint that returns the user's applications
-  const response = await axios.get('/api/user/applications');
+  const response = await axios.get('/api/applications/user');
   return response.data;
 };
 

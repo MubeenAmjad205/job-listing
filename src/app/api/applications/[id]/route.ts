@@ -1,4 +1,3 @@
-// app/api/applications/[id]/resume/route.ts  
 import { NextRequest, NextResponse } from 'next/server';  
 import { prisma } from '@/lib/prisma';  
 import { z } from 'zod';  
@@ -6,8 +5,7 @@ import { z } from 'zod';
 export async function GET( { params }:any) {  
   try {  
     
-    // Here, `params` is already the correct type, no need for `await`  
-    const { id } = await params; // `params` does not need to be awaited for destructuring  
+    const { id } = await params; 
     const application = await prisma.application.findUnique({  
       where: { id: Number(id) },  
       select: { resume: true }  
@@ -41,7 +39,6 @@ export async function PUT(
   { params }: any  
 ) {  
   try {  
-    // Same change here: no need to await `params`  
     const { id } =await params;  
     const applicationId = parseInt(id);  
 

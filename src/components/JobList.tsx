@@ -1,4 +1,4 @@
-"use client"; // This component needs to be a client component to fetch data  
+"use client"; 
 
 import { useQuery } from '@tanstack/react-query';  
 import axios from 'axios';  
@@ -12,10 +12,8 @@ const JobList = () => {
   const { data: jobs, isLoading, error } = useQuery({  
     queryKey: ['jobs'],  
     queryFn: fetchJobs,  
-    // Optional: Add configurations  
-    staleTime: 5000,  // Data is fresh for 5 seconds  
-    // cacheTime: 10000,
-     // Data is cached for 10 seconds  
+    staleTime: 5000,  
+  
   });  
 
   if (isLoading) return <div>Loading jobs...</div>;  

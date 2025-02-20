@@ -1,4 +1,3 @@
-// components/UserInfo.tsx
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -9,7 +8,6 @@ const UserInfo = () => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    // Retrieve user info from localStorage (stored during login)
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));

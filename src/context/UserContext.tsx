@@ -29,7 +29,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       try {
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
-          // Verify session with backend
           const response = await axios.get('/api/auth/session', { withCredentials: true });
           if (response.data.user) {
             setUser(response.data.user);
@@ -54,20 +53,15 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = async () => {
     try {
-      // Call logout API to clear server session
       await axios.post('/api/auth/logout', {}, {
-        withCredentials: true // Important for cookies
+        withCredentials: true 
       });
       
-      // Clear client-side state
       setUser(null);
       localStorage.removeItem('user');
       
-      // Force refresh if needed (optional)
-      // window.location.replace('/');
     } catch (error) {
       console.error('Logout failed:', error);
-      // Fallback cleanup
       setUser(null);
       localStorage.removeItem('user');
     }

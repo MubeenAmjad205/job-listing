@@ -37,7 +37,6 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL('/dashboard/user', req.url));
   }
 
-  // Proceed if the user has proper authorization
   return res;
 }
 

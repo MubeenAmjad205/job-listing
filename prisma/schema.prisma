@@ -30,15 +30,15 @@ model Job {
 }  
 
 model Application {
-  id         Int      @id @default(autoincrement())
-  jobId      Int
-  userId     Int
-  jobTitle   String
-  userName   String
-  email      String
-  resume     String   // Changed from Bytes to String (will store Cloudinary URL)
+  id          Int      @id @default(autoincrement())
+  jobId       Int
+  userId      Int
+  jobTitle    String
+  userName    String
+  email       String
+  resume      String
   coverLetter String
-  status     String   @default("pending")
-  job        Job      @relation(fields: [jobId], references: [id])
-  user       User     @relation(fields: [userId], references: [id])
+  status      String   @default("pending")
+  job         Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id])
 }

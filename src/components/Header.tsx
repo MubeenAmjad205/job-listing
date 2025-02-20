@@ -1,4 +1,3 @@
-// components/Header.tsx
 'use client';
 
 import React, { useState } from 'react';
@@ -63,7 +62,6 @@ const Header = () => {
             </>
           )}
         </div>
-        {/* Mobile Menu Button */}
         <div className="md:hidden">
           <button
             onClick={() => setMenuOpen(!menuOpen)}
@@ -73,7 +71,6 @@ const Header = () => {
           </button>
         </div>
       </div>
-      {/* Mobile Menu */}
       {menuOpen && (
         <div className="md:hidden bg-white shadow-md">
           <nav className="px-2 pt-2 pb-3 space-y-1 sm:px-3">

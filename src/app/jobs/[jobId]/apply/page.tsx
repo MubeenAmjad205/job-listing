@@ -1,4 +1,3 @@
-// components/ApplicationForm.tsx
 'use client';
 
 import React from 'react';
@@ -71,7 +70,7 @@ const ApplicationForm = () => {
           </label>
           <input
             {...register('fullName', { required: 'Full name is required' })}
-            defaultValue={user?.name} // Auto-fill from authenticated user data
+            defaultValue={user?.name} 
             className="mt-1 block w-full border border-gray-300 rounded-md p-3 focus:ring-indigo-500 focus:border-indigo-500"
           />
           {errors.fullName && (
@@ -87,7 +86,7 @@ const ApplicationForm = () => {
           <input
             type="email"
             {...register('email', { required: 'Email is required' })}
-            defaultValue={user?.email} // Auto-fill from authenticated user data
+            defaultValue={user?.email} 
             className="mt-1 block w-full border border-gray-300 rounded-md p-3 focus:ring-indigo-500 focus:border-indigo-500"
           />
           {errors.email && (

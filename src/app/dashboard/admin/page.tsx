@@ -1,4 +1,3 @@
-// app/admin/dashboard/page.tsx
 'use client';
 
 import { useState } from 'react';
@@ -46,7 +45,6 @@ const AdminDashboard = () => {
     salary: 0,
   });
 
-  // Fetch applications using React Query
   const { 
     data: applications, 
     error, 
@@ -60,7 +58,6 @@ const AdminDashboard = () => {
     enabled: user?.role === 'admin'
   });
 
-  // Application status mutation
   const { mutate: updateApplication } = useMutation({
     mutationFn: async ({ id, status }: { id: number; status: 'approved' | 'rejected' }) => {
       await axios.put(`/api/applications/${id}`, { status });
@@ -74,7 +71,6 @@ const AdminDashboard = () => {
     }
   });
 
-  // Post job mutation
   const { mutate: postJob } = useMutation({
     mutationFn: async (jobData: Job) => {
       await axios.post('/api/jobs', jobData);
@@ -105,11 +101,41 @@ const AdminDashboard = () => {
   };
 
   if (isPending) {
-    return <div className="p-8 text-center text-gray-500">Loading...</div>;
+    return  (
+      <div className='flex items-center justify-center h-screen w-full bg-white'>
+        <svg
+          width="100"
+          height="100"
+          viewBox="0 0 50 50"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="25"
+            cy="25"
+            r="20"
+            stroke="#00b4d8"
+            // stroke="#3498db"
+            strokeWidth="5"
+            fill="none"
+            strokeDasharray="100"
+            strokeDashoffset="50"
+          >
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              from="0 25 25"
+              to="360 25 25"
+              dur="1s"
+              repeatCount="indefinite"
+            />
+          </circle>
+        </svg>
+      </div>
+    );
   }
 
   if (user?.role !== 'admin') {
-    return <div className="p-8 text-center text-red-500">🔒 Unauthorized access</div>;
+    return <div className="p-8 text-center h-screen text-red-500">🔒 Unauthorized access</div>;
   }
 
   if (error) {
@@ -126,7 +152,6 @@ const AdminDashboard = () => {
           </h1>
         </div>
 
-        {/* Navigation Tabs */}
         <div className="flex gap-2 mb-8 bg-white rounded-lg p-2 shadow-sm">
           {[
             { id: 'overview', icon: FaChartLine, label: 'Overview' },
@@ -148,7 +173,6 @@ const AdminDashboard = () => {
           ))}
         </div>
 
-        {/* Overview Tab */}
         {activeTab === 'overview' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="bg-white p-6 rounded-xl shadow-lg border border-indigo-100">
@@ -189,7 +213,6 @@ const AdminDashboard = () => {
           </div>
         )}
 
-        {/* Applications Tab */}
         {activeTab === 'applications' && (
           <div className="bg-white rounded-xl shadow-lg overflow-hidden">
             <div className="p-6 bg-indigo-50 border-b border-indigo-100">
@@ -274,8 +297,6 @@ const AdminDashboard = () => {
             </div>
           </div>
         )}
-
-        {/* Post Job Tab */}
         {activeTab === 'postJob' && (
           <div className="bg-white rounded-xl shadow-lg overflow-hidden">
             <div className="p-6 bg-indigo-50 border-b border-indigo-100">

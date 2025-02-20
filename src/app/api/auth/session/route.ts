@@ -1,4 +1,3 @@
-// app/api/auth/session/route.ts  
 import { NextRequest, NextResponse } from "next/server";  
 import { getIronSession } from "iron-session";  
 import { sessionOptions } from "@/lib/session";  
@@ -26,14 +25,12 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     });  
     
   } catch (error) {  
-    // Ensure that error is typed correctly.  
     if (error instanceof Error) {  
       return NextResponse.json(  
         { error: error.message || "Failed to get session" },  
         { status: 500 }  
       );  
     }  
-    // In case the error is not an instance of Error  
     return NextResponse.json(  
       { error: "Unknown error occurred" },  
       { status: 500 }  
