@@ -10,6 +10,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FaUserPlus } from 'react-icons/fa';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 // Inline Zod schema definition
 const registerSchema = z.object({
@@ -20,13 +21,14 @@ const registerSchema = z.object({
 
 type RegisterFormInputs = z.infer<typeof registerSchema>;
 
-// API call to register user
+// API call to register 
 const registerUser = async (data: RegisterFormInputs) => {
   const response = await axios.post('/api/auth/register', data);
   return response.data;
 };
 
 const RegisterForm = () => {
+  const  router  = useRouter();
   const {
     register,
     handleSubmit,
@@ -39,8 +41,9 @@ const RegisterForm = () => {
   const mutation = useMutation({
     mutationFn: registerUser,
     onSuccess: () => {
-      toast.success("User registered successfully!");
-      reset(); // Reset form fields after successful registration
+      toast.success("User registered successfully! ;;;;;");
+      reset();
+      router.push("/auth/login");
     },
     onError: (error: AxiosError<{ error: string }>) => {
       const errorMsg =
