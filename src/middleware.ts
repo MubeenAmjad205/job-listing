@@ -1,16 +1,8 @@
-// middleware.ts
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getIronSession } from 'iron-session';
 import { sessionOptions } from '@/lib/session';
-
-interface SessionData {
-  user?: {
-    id: number;
-    email: string;
-    role: string;
-  };
-}
+import { SessionData } from '@/types'
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();

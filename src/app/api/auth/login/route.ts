@@ -3,27 +3,11 @@ import { PrismaClient } from "@prisma/client";
 import { getIronSession } from "iron-session";
 import { sessionOptions } from "@/lib/session";
 import bcrypt from "bcrypt";
+import { SessionData } from "@/types";
 
 
-declare global {
-  interface IronSessionData {
-    user?: {
-      id: string;
-      name: string;
-      email: string;
-      role: string;
-    };
-  }
-}
 
-interface SessionData {
-  user?:{
-    name:string
-    id: number;
-    email: string;
-    role: string;
-  }
-}
+
 
 
 

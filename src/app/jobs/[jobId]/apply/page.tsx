@@ -46,8 +46,7 @@ interface ApplicationFormInputs {
       return response.data;
     },
     onSuccess: (data) => {
-      toast.success('Application submitted successfully!', { hideProgressBar: true });
-      // Invalidate any queries if needed (e.g. if dashboard or application list uses them)
+      toast.success('Application submitted successfully!');
       queryClient.invalidateQueries({
         queryKey: ['applications']
       });
@@ -56,7 +55,7 @@ interface ApplicationFormInputs {
     onError: (error: unknown) => {
       const err = error as AxiosError<{ error: string }>;
       const errorMsg = err.response?.data?.error || 'Failed to submit application.';
-      toast.error(errorMsg, { hideProgressBar: true });
+      toast.error('Failed to submit application.');
     },
   });
 
@@ -141,9 +140,9 @@ interface ApplicationFormInputs {
           {mutation.isPending?'Submit Application...':'Submit Application'}
         </button>
       </form>
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
     </div>
   );
 }
 
 export default ApplicationForm;
+  

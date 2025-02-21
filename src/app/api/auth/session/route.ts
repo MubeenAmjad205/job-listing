@@ -1,14 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";  
 import { getIronSession } from "iron-session";  
 import { sessionOptions } from "@/lib/session";  
+import { SessionData } from "@/types";
 
-interface SessionData {
-  user?:{
-    id: number;
-    email: string;
-    role: string;
-  }
-}
 
 export async function GET(req: NextRequest): Promise<NextResponse> {  
   try {  

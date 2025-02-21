@@ -7,16 +7,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter, useParams } from 'next/navigation';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import axios from 'axios';
-import { RingLoader } from 'react-spinners';
 import { FaSave } from 'react-icons/fa';
+import {editJobSchema} from '@/schemas/index'; 
+import { toast } from 'react-toastify';
 
-const editJobSchema = z.object({
-  title: z.string().min(2, 'Job title is required'),
-  description: z.string().min(5, 'Job description is required'),
-  category: z.string().min(2, 'Category is required'),
-  location: z.string().min(2, 'Location is required'),
-  salary: z.preprocess((val) => Number(val), z.number().min(0)),
-});
 
 type EditJobFormInputs = z.infer<typeof editJobSchema>;
 
@@ -71,9 +65,11 @@ export default function EditJobPage() {
     },
     onSuccess: () => {
       router.push('/admin/dashboard');
+      toast.success('Job updated successfully!');
     },
     onError: (error) => {
       console.error('Update error:', error);
+      toast.error('Failed to update job');
     },
   });
 
@@ -213,7 +209,7 @@ export default function EditJobPage() {
           <button
             type="submit"
             disabled={updateMutation.isPending}
-            className="flex items-center gap-2 px-5 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition"
+            className={`${updateMutation.isPending?'cursor-not-allowed':null} flex items-center gap-2 px-5 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition`}
           >
             <FaSave />
             {updateMutation.isPending ? 'Updating...' : 'Update Job'}

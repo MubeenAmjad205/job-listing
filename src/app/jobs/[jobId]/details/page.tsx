@@ -30,14 +30,14 @@ export default function JobDetailPage() {
       return res.data;
     },
     onSuccess: () => {
-      toast.success('Job deleted successfully!', { hideProgressBar: true });
+      toast.success('Job deleted successfully!');
       queryClient.invalidateQueries({  
         queryKey: ['jobs'],  
     }); 
       router.push('/admin/dashboard');
     },
     onError: () => {
-      toast.error('Failed to delete job.', { hideProgressBar: true });
+      toast.error('Failed to delete job.');
     },
   });
 
@@ -159,7 +159,6 @@ export default function JobDetailPage() {
           </div>
         </div>
       </div>
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
     </div>
   );
 }

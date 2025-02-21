@@ -7,12 +7,14 @@ export interface User {
     email: string;
     role: string;
   }
-export interface UserSession {
-    id: number;
-    name: string;
-    email: string;
-    role: string;
+
+  export interface UserContextType {
+    user: User | null;
+    login: (userData: User) => void;
+    logout: () => Promise<void>;
+    isLoading: boolean;
   }
+
 
  
   
@@ -36,13 +38,13 @@ export interface Application {
 
   
 
-declare module 'iron-session' {  
-    interface IronSessionData {  
-        user?: {  
-          id: number; email: string; role: string; 
-            
-        };  
-    }  
+export interface SessionData {
+  user?: {
+    id: number;
+    name:string;
+    email: string;
+    role: string;
+  };
 }  
 export interface Job {
   id: string|number;
@@ -51,6 +53,6 @@ export interface Job {
   company?: string;
   location?: string;
   category?:string;
-  salary?: string;
+  salary?: string|number;
   postedAt?: string;
 }

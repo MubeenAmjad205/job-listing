@@ -1,22 +1,11 @@
-// context/UserContext.tsx
 'use client';
 
 import axios from 'axios';
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { User,UserContextType } from '@/types';
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-}
 
-interface UserContextType {
-  user: User | null;
-  login: (userData: User) => void;
-  logout: () => Promise<void>;
-  isLoading: boolean;
-}
+
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 

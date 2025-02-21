@@ -1,17 +1,12 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 import { getIronSession } from 'iron-session';
 import { sessionOptions } from '@/lib/session';
+import { prisma } from '@/lib/prisma';
+import { SessionData } from '@/types';
 
-interface SessionData {
-  user?: {
-    id: number;
-    email: string;
-    role: string;
-  }
-}
 
-const prisma = new PrismaClient();
+
+
 
 export async function GET(
   req: Request,

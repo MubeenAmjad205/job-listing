@@ -22,7 +22,7 @@ const Header = () => {
         <div className="flex-shrink-0">
           <Link href="/">
             <span className="text-2xl font-bold text-indigo-600 cursor-pointer">
-              JobPortal
+           Jobify
             </span>
           </Link>
         </div>

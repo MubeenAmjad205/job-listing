@@ -1,20 +1,14 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { User } from '@/types';
 import { FaUserCircle } from 'react-icons/fa';
+import { useUser } from '@/context/UserContext';
 
 const UserInfo = () => {
-  const [user, setUser] = useState<User | null>(null);
+  const { user, isLoading } = useUser();
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
 
-  if (!user) {
+
+  if (isLoading) {
     return <div className="text-center text-gray-600">Loading user info...</div>;
   }
 
@@ -27,15 +21,15 @@ const UserInfo = () => {
       <div className="space-y-3">
         <p>
           <span className="font-bold text-indigo-600">Name:</span>{' '}
-          <span className="text-gray-700">{user.name}</span>
+          <span className="text-gray-700">{user?.name}</span>
         </p>
         <p>
           <span className="font-bold text-indigo-600">Email:</span>{' '}
-          <span className="text-gray-700">{user.email}</span>
+          <span className="text-gray-700">{user?.email}</span>
         </p>
         <p>
           <span className="font-bold text-indigo-600">Role:</span>{' '}
-          <span className="text-gray-700">{user.role}</span>
+          <span className="text-gray-700">{user?.role}</span>
         </p>
       </div>
     </div>

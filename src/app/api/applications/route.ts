@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma';
 import cloudinary from '@/lib/cloudinary';
 import upload from '@/lib/multer';
 import { Readable } from 'stream';
+import { SessionData } from '@/types';
 
 interface MulterFile extends Express.Multer.File {
   buffer: Buffer;
@@ -17,14 +18,7 @@ export const config = {
   },
 };
 
-interface SessionData {
-  user?: {
-    name: string;
-    id: number;
-    email: string;
-    role: string;
-  };
-}
+
 
 interface MulterRequest extends NodeJS.ReadableStream {
   headers: Record<string, string | string[]>;

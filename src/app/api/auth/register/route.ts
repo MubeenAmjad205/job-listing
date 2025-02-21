@@ -1,14 +1,9 @@
 import { NextResponse } from 'next/server';
 import { hash } from 'bcrypt';
-import { z } from 'zod';
-import { PrismaClient } from '@prisma/client';
+import { registerSchema } from '@/schemas';
+import { prisma } from '@/lib/prisma';
 
-const registerSchema = z.object({
-  name: z.string().min(1, { message: 'Name is required' }),
-  email: z.string().email({ message: 'Invalid email address' }),
-  password: z.string().min(6, { message: 'Password must be at least 6 characters' })
-});
-const prisma = new PrismaClient();  
+
 
 export async function POST(request: Request) {
   try {

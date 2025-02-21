@@ -5,9 +5,9 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import ApplicationItem from './ApplicationItem';
 import { Application } from '@/types';
+import Link from 'next/link';
 
 const fetchApplications = async (): Promise<Application[]> => {
-  // Replace with your actual API endpoint that returns the user's applications
   const response = await axios.get('/api/applications/user');
   return response.data;
 };
@@ -37,7 +37,7 @@ const ApplicationsList = () => {
         </div>
       ) : (
         <div className="text-center text-gray-600">
-          You have not applied for any jobs yet.
+          No job application yet, apply now <Link href={'/jobs'} className='text-blue-600 underline '>Jobs</Link>
         </div>
       )}
     </div>

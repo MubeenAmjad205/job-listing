@@ -18,13 +18,9 @@ import { useUser } from '@/context/UserContext';
 import { Job } from '@/types';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { searchSchema} from '@/schemas/index';
 
-const searchSchema = z.object({
-  location: z.string().optional(),
-  category: z.string().optional(),
-  salary: z
-    .preprocess((val) => (val === '' || val === null ? undefined : Number(val)), z.number().optional()),
-});
+
 
 type SearchFormData = z.infer<typeof searchSchema>;
 
@@ -65,13 +61,13 @@ export default function JobListingPage() {
     if (!jobs) return [];
     let result = [...jobs];
     if (filters.location) {
-      result = result.filter((job:any) =>
-        job.location.toLowerCase().includes(filters.location!.toLowerCase())
+      result = result.filter((job:Job) =>
+        job?.location?.toLowerCase().includes(filters.location!.toLowerCase())
       );
     }
     if (filters.category) {
-      result = result.filter((job:any) =>
-        job?.category.toLowerCase().includes(filters.category!.toLowerCase())
+      result = result.filter((job:Job) =>
+        job?.category?.toLowerCase().includes(filters.category!.toLowerCase())
       );
     }
     if (filters.salary !== undefined) {
@@ -201,12 +197,12 @@ export default function JobListingPage() {
                       <strong>Location:</strong> {job.location}
                     </p>
                     <p className="text-gray-600 mb-4">
-                      <strong>Salary:</strong> ${job.salary.toLocaleString()}
+                      <strong>Salary:</strong> ${job?.salary?.toLocaleString()}
                     </p>
                   </div>
                   <div className="mt-4 flex flex-col gap-2">
                     <button
-                      onClick={() => handleDetails(job.id)}
+                      onClick={() => handleDetails(job?.id)}
                       className="bg-indigo-600 text-white px-4 py-2 rounded flex items-center justify-center gap-2 hover:bg-indigo-700 transition"
                     >
                       <FaInfoCircle />
@@ -214,7 +210,7 @@ export default function JobListingPage() {
                     </button>
                     {user && user.role === 'user' && (
                       <button
-                        onClick={() => handleApply(job.id)}
+                        onClick={() => handleApply(job?.id)}
                         className="bg-green-600 text-white px-4 py-2 rounded flex items-center justify-center gap-2 hover:bg-green-700 transition"
                       >
                         <FaPaperPlane />
