@@ -99,7 +99,7 @@ const RegisterForm = () => {
         <button
           type="submit"
           disabled={mutation.isPending}
-          className={`${mutation.isPending?'cursor-not-allowed ':null }flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors w-full`}
+          className={`${mutation.isPending?'cursor-not-allowed ':null } flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors w-full`}
         >
           <FaUserPlus className="mr-2" />
           {mutation.isPending ? "Registering..." : "Register"}
