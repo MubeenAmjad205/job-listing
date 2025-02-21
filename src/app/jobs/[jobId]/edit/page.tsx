@@ -64,7 +64,7 @@ export default function EditJobPage() {
       return res.data;
     },
     onSuccess: () => {
-      router.push('/admin/dashboard');
+      router.push(`/jobs/${jobId}/details`);
       toast.success('Job updated successfully!');
     },
     onError: (error) => {

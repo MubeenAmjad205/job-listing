@@ -46,14 +46,28 @@ export default function JobDetailPage() {
   };
 
   const handleEdit = () => {
-    router.push(`/admin/jobs/${jobId}/edit`);
+    router.push(`/jobs/${jobId}/edit`);
   };
 
-  const handleDelete = () => {
-    if (confirm('Are you sure you want to delete this job? This action cannot be undone.')) {
-      deleteMutation.mutate();
-    }
-  };
+  // async function handleDelete(jobId:any) {
+  //   try {
+  //     const response = await axios.delete(`/api/jobs/${jobId}`);
+  //     if (response.status === 200) {
+  //       queryClient.invalidateQueries({  
+  //         queryKey: ['jobs'],  
+  //     }); 
+  //       toast.success('Job deleted successfully!');
+  //       router.push('/jobs');
+  //     }
+  //   } catch (error) {
+  //     if (axios.isAxiosError(error)) {
+  //       toast.error(`Failed to delete job: ${error.message}`);
+  //     } else {
+  //       toast.error('An unexpected error occurred.', );
+  //     }
+  //   }
+  // }
+
 
   if (isLoading || userLoading)   {
     return  (
@@ -147,13 +161,13 @@ export default function JobDetailPage() {
                   <FaEdit />
                   Edit Job
                 </button>
-                <button
+                {/* <button
                   onClick={handleDelete}
                   className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded shadow transition"
                 >
                   <FaTrash />
                   Delete Job
-                </button>
+                </button> */}
               </>
             )}
           </div>

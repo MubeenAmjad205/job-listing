@@ -21,7 +21,7 @@ export interface User {
   export interface Application {
     id: number;
     jobTitle: string;
-    status: 'pending' | 'accepted' | 'rejected';
+    status: 'pending' | 'approved' | 'rejected';
   }
 
 
@@ -33,7 +33,7 @@ export interface Application {
   email: string;
   coverLetter: string;
   resume: string;
-  status: 'pending' | 'accepted' | 'rejected';
+  status: 'pending' | 'approved' | 'rejected';
 }
 
   

@@ -8,8 +8,12 @@ import { useUser } from '@/context/UserContext';
 import { useRouter } from 'next/navigation';
 
 const HomePage = () => {
-  const { user } = useUser();
+  const { user , logout} = useUser();
   const router = useRouter ();
+  const handleLogout = async () => {
+    await logout();
+    router.push('/auth/login');
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -48,7 +52,7 @@ const HomePage = () => {
                   Explore Jobs
                 </Link>
                 <button
-                  onClick={() => signOut()}
+                  onClick={() => handleLogout()}
                   className="bg-red-600 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-red-700 transition duration-300"
                 >
                   Log Out

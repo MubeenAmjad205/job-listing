@@ -19,9 +19,9 @@ const ApplicationItem: React.FC<ApplicationItemProps> = ({ application }) => {
       statusText = 'Pending';
       bgColor = 'bg-yellow-100';
       break;
-    case 'accepted':
+    case 'approved':
       statusIcon = <FaCheckCircle className="inline-block mr-2" />;
-      statusText = 'Accepted';
+      statusText = 'Approved';
       bgColor = 'bg-green-100';
       break;
     case 'rejected':
