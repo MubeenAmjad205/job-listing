@@ -22,6 +22,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/lib/ai/workflow.js", "src/app/api/analysis/[applicationId]/route.js", "src/lib/ai/analysis.js", "src/lib/ai/prompting.js", "src/lib/ai/embeddings.js"],
   "exclude": ["node_modules"]
 }
