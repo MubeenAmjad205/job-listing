@@ -152,7 +152,7 @@ const AdminDashboard = () => {
         if (!applications.length) return [];
         return [
             { name: 'Pending', value: applications.filter(app => app.status === 'pending').length },
-            { name: 'approved', value: applications.filter(app => app.status === 'approved').length },
+            { name: 'Approved', value: applications.filter(app => app.status === 'approved').length },
             { name: 'Rejected', value: applications.filter(app => app.status === 'rejected').length },
         ];
     }, [applications]);
@@ -354,7 +354,7 @@ const AdminDashboard = () => {
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="space-y-2">
-                                                    {application.status === 'Pending' ? (
+                                                    {application.status === 'pending' ? (
                                                         <>
                                                             <button
                                                                 onClick={() => handleApplicationAction(application.id, 'approved')}
@@ -364,7 +364,7 @@ const AdminDashboard = () => {
                                                             </button>
                                                             <button
                                                                 onClick={() => handleApplicationAction(application.id, 'rejected')}
-                                                                className="text-white bg-red-600 px-6 py-2 rounded-lg hover:bg-red-700 transition flex items-center gap-1"
+                                                                className="text-white bg-red-600 px-5 py-2 rounded-lg hover:bg-red-700 transition flex items-center gap-1"
                                                             >
                                                                 <FaTimes /> Reject
                                                             </button>
@@ -379,7 +379,7 @@ const AdminDashboard = () => {
                                                     ) : (
                                                         <button
                                                             onClick={() => handleApplicationAction(application.id, 'rejected')}
-                                                            className="text-white bg-red-600 px-6 py-2 rounded-lg hover:bg-red-700 transition flex items-center gap-1"
+                                                            className="text-white bg-red-600 px-5 py-2 rounded-lg hover:bg-red-700 transition flex items-center gap-1"
                                                         >
                                                             <FaTimes /> Reject
                                                         </button>
