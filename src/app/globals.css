@@ -1,5 +1,105 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* global.css */
+/* global.css */
 
 
+.ai-loader-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #0a0e17;
+  }
+  
+  .ai-loader {
+    position: relative;
+    width: 300px;
+    height: 200px;
+  }
+  
+  .loader-text {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    font-size: 1.5rem;
+    text-align: center;
+    background: linear-gradient(135deg, #00f3ff 0%, #8a2be2 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    position: relative;
+    z-index: 2;
+    animation: text-shimmer 2s ease-in-out infinite;
+  }
+  
+  .loader-core {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    filter: url(#goo);
+  }
+  
+  .core-glow {
+    fill: #00f3ff33;
+    animation: core-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  .emission-particles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .particle {
+    position: absolute;
+    background: linear-gradient(45deg, #00f3ff, #8a2be2);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    filter: blur(1px);
+    animation: particle-emit 1.5s infinite;
+  }
+  
+  .scan-line {
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00f3ff44, transparent);
+    animation: scan 3s linear infinite;
+    filter: blur(1px);
+  }
+  
+  @keyframes core-pulse {
+    0%, 100% { transform: scale(1); opacity: 0.4; }
+    50% { transform: scale(1.2); opacity: 0.8; }
+  }
+  
+  @keyframes particle-emit {
+    0% {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translate3d(
+        calc(var(--tx) * 100px),
+        calc(var(--ty) * 100px),
+        0
+      ) scale(0);
+    }
+  }
+  
+  @keyframes scan {
+    0% { top: -10%; }
+    100% { top: 110%; }
+  }
+  
+  @keyframes text-shimmer {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }

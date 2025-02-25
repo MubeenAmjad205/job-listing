@@ -8,12 +8,14 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {
     FaUser, FaBriefcase, FaFileAlt, FaPlus, FaCheck, FaTimes,
-    FaChartLine, FaMoneyCheckAlt, FaMapMarkerAlt, FaTag
+    FaChartLine, FaMoneyCheckAlt, FaMapMarkerAlt, FaTag,
+    FaRobot
 } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { Job, Application, User as UserType } from '@/types';
 import JobsByCategoryDonutChart, { CategoryData } from '@/components/JobsByCategoryDonutChart';
 import ApplicationStatusChart, { StatusData } from '@/components/ApplicationStatusChart';
+import Link from 'next/link';
 
 interface NewJobData extends Job { }
 
@@ -303,7 +305,7 @@ const AdminDashboard = () => {
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                     <tr>
-                                        {['Applicant', 'Job Title', 'Resume', 'Status', 'Actions'].map((header) => (
+                                        {['Applicant', 'Job Title', 'Resume', 'Ai Review','Status', 'Actions'].map((header) => (
                                             <th
                                                 key={header}
                                                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -335,14 +337,24 @@ const AdminDashboard = () => {
                                                 {application.job.title}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <a
+                                                <Link
                                                     href={application.resume}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="text-indigo-600 hover:text-indigo-900 flex items-center gap-1"
                                                 >
                                                     <FaFileAlt /> View
-                                                </a>
+                                                </Link>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <Link
+                                                    href={`/dashboard/admin/ai-analyze/${application.id}`}
+                                                    // target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-indigo-600 hover:text-indigo-900 flex items-center gap-1"
+                                                >
+                                                  <FaRobot size={22} className='mx-1'/> AI Review
+                                                </Link>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <span className={`px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full 

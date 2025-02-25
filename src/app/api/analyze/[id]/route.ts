@@ -1,3 +1,4 @@
+
 import { NextRequest, NextResponse } from "next/server";
 import { getIronSession } from "iron-session";
 import { sessionOptions } from "@/lib/session";
@@ -5,24 +6,57 @@ import { prisma } from "@/lib/prisma";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { SessionData } from "@/types";
 
+// Helper: fetch file as Buffer
+async function fetchFile(url: string): Promise<Buffer> {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error("Failed to fetch file");
+  const arrayBuffer = await response.arrayBuffer();
+  return Buffer.from(arrayBuffer);
+}
+
+// Helper: extract text from PDF using pdfreader
+function extractTextFromPdf(buffer: Buffer): Promise<string> {
+  return new Promise((resolve, reject) => {
+    // Dynamically require pdfreader to avoid build-time issues
+    const { PdfReader } = require("pdfreader");
+    let extractedText = "";
+    new PdfReader().parseBuffer(buffer, (err: any, item: any) => {
+      if (err) {
+        reject(err);
+      } else if (!item) {
+        // When done, resolve with the full text
+        resolve(extractedText.trim());
+      } else if (item.text) {
+        extractedText += item.text + " ";
+      }
+    });
+  });
+}
+
+// Helper: parse JSON from markdown string (if wrapped with ```json ... ```)
+function parseJSONFromMarkdown(text: string): any {
+  const markdownRegex = /^```json\s*([\s\S]*?)\s*```$/;
+  const match = text.match(markdownRegex);
+  if (match) {
+    return JSON.parse(match[1]);
+  }
+  return JSON.parse(text);
+}
+
 export async function GET(
   req: NextRequest,
-  context: { params: Promise<{ id: string }> } // Adjusted params type
+  {params}: { params: Promise<{ id: string }>}
 ) {
   try {
     console.log("Analyzing application...");
 
-    // Await the params promise
-    const { id } = await context.params;
-    const applicationId = parseInt(id, 10);
-
-    // Verify user session
+    // Verify user session (if needed)
     const session = await getIronSession<SessionData>(
       req,
       NextResponse.next(),
       sessionOptions
     );
-
+    // (Optional) session check can be added here
     if (!session.user) {
       return NextResponse.json(
         { success: false, error: "Unauthorized" },
@@ -30,7 +64,9 @@ export async function GET(
       );
     }
 
-    // Fetch the application record from the database
+    const { id } = await params;
+    const applicationId = parseInt(id, 10);
+
     const application = await prisma.application.findUnique({
       where: { id: applicationId },
       include: { job: true,user: true },
@@ -42,20 +78,28 @@ export async function GET(
         { status: 404 }
       );
     }
+    if (!application.resume) {
+      return NextResponse.json(
+        { success: false, error: "Resume file missing" },
+        { status: 400 }
+      );
+    }
 
-    // Extract resume text
-    // const resumeText = await extractTextFromDocument(application.resume);
+    // console.log("Resume URL:", application.resume);
+    const fileBuffer = await fetchFile(application.resume);
+    let resumeText = await extractTextFromPdf(fileBuffer);
+    resumeText = resumeText.replace(/(\S) /g, '$1');
+    console.log("File Size:", resumeText.length);
+    console.log("Extracted Text (first 200 chars):", resumeText.slice(0, 200).replace(/(\S) /g, '$1'));
 
-    // Get cover letter and job description
     const coverLetter = application.coverLetter;
-    const jobDescription =
-      application.job?.description || application.jobTitle;
+    const jobDescription = application.job?.description || application.jobTitle;
 
-    // Prompt for AI model
     const prompt = `
 You are an AI recruitment assistant. Below are the details of an application:
 
 Resume Text:
+${resumeText}
 
 Cover Letter:
 ${coverLetter}
@@ -81,20 +125,17 @@ Output the response in the following JSON format:
 }
     `;
 
-    // Initialize the AI model
     const model = new ChatGoogleGenerativeAI({
       apiKey: process.env.GOOGLE_API_KEY,
       temperature: 0.3,
       modelName: "gemini-1.5-flash",
     });
 
-    // Invoke the AI model
     const responseText: any = await model.invoke(prompt);
-
-    // Try to parse response as JSON
     let parsedResponse;
     try {
-      parsedResponse = JSON.parse(responseText);
+      parsedResponse = parseJSONFromMarkdown(responseText);
+      // console.log("Parsed AI response:", parsedResponse);
     } catch (err) {
       parsedResponse = { suggestion: responseText, stats: {} };
     }
@@ -108,3 +149,5 @@ Output the response in the following JSON format:
     );
   }
 }
+
+

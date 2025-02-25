@@ -5,10 +5,11 @@ import axios from 'axios';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { 
   FaStar, FaCheckCircle, FaCode, FaTimesCircle, 
-  FaUser, FaBriefcase, FaCheck, FaTimes 
+  FaUser, FaBriefcase, FaCheck, FaTimes, FaBolt 
 } from 'react-icons/fa';
-import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { toast } from 'react-toastify';
+import { Loader } from './Loader';
 
 interface AnalysisData {
   id: string;
@@ -70,14 +71,20 @@ const fetchAnalysis = async (applicationId: string): Promise<AnalysisData> => {
   
   if (data && data.suggestion && data.suggestion.kwargs && data.suggestion.kwargs.content) {
     console.log('Analysis data:', data.suggestion.kwargs.content);
+    const jsonData = parseJSONContent(data.suggestion.kwargs.content);
     
-    const jsonData =parseJSONContent(data.suggestion.kwargs.content);
-    
-    return {...jsonData,applicantName:data.user.name, jobTitle:data.job.title, currentStatus:data?.application?.status};
+    return {
+      ...jsonData,
+      applicantName: data.user.name,
+      jobTitle: data.job.title,
+      currentStatus: data?.application?.status,
+    };
   } else {
     throw new Error('Invalid API response structure.');
   }
 };
+
+
 
 const AnalysisDashboard: React.FC<{ applicationId: any }> = ({ applicationId }) => {
   const queryClient = useQueryClient();
@@ -91,18 +98,17 @@ const AnalysisDashboard: React.FC<{ applicationId: any }> = ({ applicationId }) 
     retry: false,
   });
 
-  // Mutation for updating application status (approve/reject)
-  const { mutate: updateApplication, isPending: isUpdating } = useMutation({
-    mutationFn: async (status: 'approved' | 'rejected') => {
-      if (!data?.id) throw new Error('No application data');
-      await axios.put(`/api/applications/${data.id}`, { status });
+  // Updated mutation using new object syntax for updating application status
+  const updateApplication = useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: 'approved' | 'rejected' }) => {
+      await axios.put(`/api/applications/${id}`, { status });
     },
     onSuccess: () => {
-      toast.success('Status updated');
-      queryClient.invalidateQueries<any>(['analysis', applicationId]);
+      toast.success('Application updated', { hideProgressBar: true });
+      queryClient.invalidateQueries({ queryKey: ['analysis', applicationId] });
     },
     onError: () => {
-      toast.error('Update failed');
+      toast.error('Failed to update application', { hideProgressBar: true });
     },
   });
 
@@ -114,13 +120,7 @@ const AnalysisDashboard: React.FC<{ applicationId: any }> = ({ applicationId }) 
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-8">
-        <p className="text-lg text-gray-600 animate-pulse">
-          Loading analysis...
-        </p>
-      </div>
-    );
+    return <Loader />;
   }
 
   if (error || !isValidId) {
@@ -132,7 +132,7 @@ const AnalysisDashboard: React.FC<{ applicationId: any }> = ({ applicationId }) 
       </div>
     );
   }
-console.log(data);
+  // console.log(data);
 
   const { 
     applicantName = 'Applicant Name',
@@ -169,16 +169,16 @@ console.log(data);
           {/* Action Buttons */}
           <div className="flex gap-3">
             <button
-              onClick={() => updateApplication('approved')}
-              disabled={isUpdating || currentStatus === 'approved'}
-              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+              onClick={() => updateApplication.mutate({ id: applicationId, status: 'approved' })}
+              disabled={updateApplication.isPending || currentStatus === 'approved'}
+              className="flex items-center gap-2 px-2  py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
             >
               <FaCheck />
               {currentStatus === 'approved' ? 'Approved' : 'Approve'}
             </button>
             <button
-              onClick={() => updateApplication('rejected')}
-              disabled={isUpdating || currentStatus === 'rejected'}
+              onClick={() => updateApplication.mutate({ id: applicationId, status: 'rejected' })}
+              disabled={updateApplication.isPending || currentStatus === 'rejected'}
               className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
             >
               <FaTimes />
@@ -207,7 +207,7 @@ console.log(data);
             icon={<FaCode className="text-blue-600 w-5 h-5" />}
             title="Match Score"
           >
-            <div className="relative h-40">
+            <div className="relative  h-40 flex items-center justify-center">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -225,6 +225,8 @@ console.log(data);
                         fill={CHART_COLORS[index % CHART_COLORS.length]}
                       />
                     ))}
+                          {/* <Legend /> */}
+                    
                   </Pie>
                   <text
                     x="50%"
@@ -232,9 +234,11 @@ console.log(data);
                     textAnchor="middle"
                     dominantBaseline="middle"
                     className="text-2xl font-bold text-blue-800"
-                  >
+                    >
                     {stats.matchScore}%
                   </text>
+                    <Tooltip/>
+                  
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -246,12 +250,18 @@ console.log(data);
             title="Key Skills"
           >
             <ul className="space-y-2">
+              {stats.keySkills.length === 0 ? (
+                <li className="text-gray-500">No relevant skills information provided.</li>):
+                (
+                  <>
               {stats.keySkills.map((skill, index) => (
                 <li key={index} className="flex items-center">
                   <span className="w-2 h-2 bg-green-600 rounded-full mr-2" />
                   {skill}
                 </li>
               ))}
+              </>
+              )}
             </ul>
           </StatsCard>
 

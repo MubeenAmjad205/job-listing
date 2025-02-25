@@ -118,12 +118,12 @@ interface ApplicationFormInputs {
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Resume Upload (PDF, DOC)
+            Resume Upload (PDF)
           </label>
           <input
             type="file"
             {...register('resume', { required: 'Resume is required' })}
-            accept=".pdf, .doc, .docx"
+            accept=".pdf"
             className="mt-1 block w-full"
           />
           {errors.resume && (
