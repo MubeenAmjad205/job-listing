@@ -2,16 +2,55 @@
 
 import React from 'react';
 import axios from 'axios';
-import { useQuery } from '@tanstack/react-query';
-import { FaStar, FaCheckCircle, FaCode, FaTimesCircle } from 'react-icons/fa';
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
+import { 
+  FaStar, FaCheckCircle, FaCode, FaTimesCircle, 
+  FaUser, FaBriefcase, FaCheck, FaTimes 
+} from 'react-icons/fa';
+import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import { toast } from 'react-toastify';
 
-// Helper function to parse JSON from markdown or plain text
-const parseJSONContent = (content) => {
+interface AnalysisData {
+  id: string;
+  applicantName: string;
+  jobTitle: string;
+  currentStatus: 'pending' | 'approved' | 'rejected';
+  suggestion: string;
+  stats: {
+    matchScore: number;
+    keySkills: string[];
+    experienceSummary: string;
+  };
+}
+
+interface StatsCardProps {
+  icon: React.ReactNode;
+  title: string;
+  children: React.ReactNode;
+}
+
+const StatsCard: React.FC<StatsCardProps> = ({ icon, title, children }) => (
+  <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow h-full">
+    <h3 className="flex items-center gap-2 text-lg font-semibold mb-3 text-gray-700">
+      {icon}
+      {title}
+    </h3>
+    <div className="text-gray-600">{children}</div>
+  </div>
+);
+
+const prepareChartData = (score: number) => [
+  { name: 'Match', value: score },
+  { name: 'Remaining', value: 100 - score },
+];
+
+const CHART_COLORS = ['#2563eb', '#e2e8f0'];
+
+// Helper function to parse JSON or extract JSON wrapped in markdown code fences
+const parseJSONContent = (content: string): AnalysisData => {
   try {
-    // Attempt to parse as plain JSON
     return JSON.parse(content);
   } catch {
-    // If parsing fails, try to extract JSON from markdown code fences
     const markdownRegex = /```json\s*([\s\S]*?)\s*```/;
     const match = content.match(markdownRegex);
     if (match && match[1]) {
@@ -22,95 +61,210 @@ const parseJSONContent = (content) => {
   }
 };
 
-// Fetch function using Axios
-const fetchAnalysis = async (applicationId) => {
+// Fetch function that uses robust logic from the first snippet
+const fetchAnalysis = async (applicationId: string): Promise<AnalysisData> => {
+  if (!applicationId || applicationId === 'undefined') {
+    throw new Error('Invalid application ID');
+  }
   const { data } = await axios.get(`/api/analyze/${applicationId}`);
+  
   if (data && data.suggestion && data.suggestion.kwargs && data.suggestion.kwargs.content) {
     console.log('Analysis data:', data.suggestion.kwargs.content);
     
-    return parseJSONContent(data.suggestion.kwargs.content);
+    const jsonData =parseJSONContent(data.suggestion.kwargs.content);
+    
+    return {...jsonData,applicantName:data.user.name, jobTitle:data.job.title, currentStatus:data?.application?.status};
   } else {
     throw new Error('Invalid API response structure.');
   }
 };
 
-const AnalysisDashboard = ({ applicationId }) => {
-  const { data, error, isLoading } = useQuery({
+const AnalysisDashboard: React.FC<{ applicationId: any }> = ({ applicationId }) => {
+  const queryClient = useQueryClient();
+  const isValidId = !!applicationId && applicationId !== 'undefined';
+
+  // Data fetching using react-query
+  const { data, error, isLoading } = useQuery<AnalysisData>({
     queryKey: ['analysis', applicationId],
     queryFn: () => fetchAnalysis(applicationId),
+    enabled: isValidId,
+    retry: false,
   });
+
+  // Mutation for updating application status (approve/reject)
+  const { mutate: updateApplication, isPending: isUpdating } = useMutation({
+    mutationFn: async (status: 'approved' | 'rejected') => {
+      if (!data?.id) throw new Error('No application data');
+      await axios.put(`/api/applications/${data.id}`, { status });
+    },
+    onSuccess: () => {
+      toast.success('Status updated');
+      queryClient.invalidateQueries<any>(['analysis', applicationId]);
+    },
+    onError: () => {
+      toast.error('Update failed');
+    },
+  });
+
+  // Status badge styling
+  const statusStyles = {
+    pending: 'bg-yellow-100 text-yellow-800',
+    approved: 'bg-green-100 text-green-800',
+    rejected: 'bg-red-100 text-red-800',
+  };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-8">
-        <p className="text-xl text-gray-700">Loading analysis...</p>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-8">
+        <p className="text-lg text-gray-600 animate-pulse">
+          Loading analysis...
+        </p>
       </div>
     );
   }
 
-  if (error) {
+  if (error || !isValidId) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-8">
-        <p className="text-xl text-red-600">Error: {error.message}</p>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-8">
+        <p className="text-lg text-red-600">
+          Error: {(error as Error)?.message || 'Invalid application ID'}
+        </p>
       </div>
     );
   }
+console.log(data);
 
-  if (!data) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-8">
-        <p className="text-xl text-gray-700">No analysis data available.</p>
-      </div>
-    );
-  }
-
-  const { suggestion, stats } = data;
+  const { 
+    applicantName = 'Applicant Name',
+    jobTitle = 'Job Title',
+    currentStatus = 'pending',
+    suggestion = 'No recommendation available',
+    stats = {
+      matchScore: 0,
+      keySkills: [],
+      experienceSummary: 'No experience summary',
+    },
+  } = data || {};
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-6xl mx-auto bg-white/80 backdrop-blur-md rounded-xl shadow-2xl p-8">
-        <h1 className="flex items-center justify-center gap-2 text-4xl font-extrabold text-center text-gray-900 mb-8">
-          <FaStar className="text-yellow-500" />
-          Candidate Analysis
-        </h1>
-        <div className="mb-8">
-          <h2 className="flex items-center gap-2 text-2xl font-semibold mb-4">
-            <FaCheckCircle className="text-green-500" />
-            Suggestion
+    <div className="min-h-screen bg-gray-50 p-8">
+      <div className="max-w-6xl mx-auto bg-white backdrop-blur-md rounded-2xl shadow-xl p-6 md:p-10">
+        {/* Header Section */}
+        <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h1 className="inline-flex items-center gap-3 text-3xl font-bold text-gray-900">
+              <FaUser className="text-blue-500 w-6 h-6" />
+              {applicantName}
+            </h1>
+            <div className="mt-2 flex items-center gap-3">
+              <span className="inline-flex items-center gap-2 text-lg text-gray-600">
+                <FaBriefcase className="w-4 h-4" />
+                {jobTitle}
+              </span>
+              <span className={`px-3 py-1 rounded-full text-sm font-medium ${statusStyles[currentStatus]}`}>
+                {currentStatus}
+              </span>
+            </div>
+          </div>
+          {/* Action Buttons */}
+          <div className="flex gap-3">
+            <button
+              onClick={() => updateApplication('approved')}
+              disabled={isUpdating || currentStatus === 'approved'}
+              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+            >
+              <FaCheck />
+              {currentStatus === 'approved' ? 'Approved' : 'Approve'}
+            </button>
+            <button
+              onClick={() => updateApplication('rejected')}
+              disabled={isUpdating || currentStatus === 'rejected'}
+              className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+            >
+              <FaTimes />
+              {currentStatus === 'rejected' ? 'Rejected' : 'Reject'}
+            </button>
+          </div>
+        </header>
+
+        {/* Recommendation Section */}
+        <section className="mb-10">
+          <h2 className="flex items-center gap-2 text-xl font-semibold mb-4 text-gray-800">
+            <FaCheckCircle className="text-green-600 w-5 h-5" />
+            Hiring Recommendation
           </h2>
-          <div className="p-4 bg-blue-50 rounded-lg shadow-md">
-            <p className="text-gray-800 whitespace-pre-wrap">{suggestion}</p>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-green-50 p-6 rounded-xl shadow-lg">
-            <h3 className="flex items-center gap-1 text-xl font-bold mb-2">
-              <FaCode className="text-green-700" />
-              Match Score
-            </h3>
-            <p className="text-2xl text-gray-800">{stats.matchScore}</p>
-          </div>
-          <div className="bg-yellow-50 p-6 rounded-xl shadow-lg">
-            <h3 className="flex items-center gap-1 text-xl font-bold mb-2">
-              <FaCheckCircle className="text-yellow-700" />
-              Key Skills
-            </h3>
-            <ul className="list-disc list-inside text-gray-700">
-              {stats.keySkills.map((skill, index) => (
-                <li key={index}>{skill}</li>
-              ))}
-            </ul>
-          </div>
-          <div className="bg-purple-50 p-6 rounded-xl shadow-lg">
-            <h3 className="flex items-center gap-1 text-xl font-bold mb-2">
-              <FaTimesCircle className="text-purple-700" />
-              Experience Summary
-            </h3>
-            <p className="text-gray-700 whitespace-pre-wrap">
-              {stats.experienceSummary}
+          <div className="p-5 bg-indigo-50 rounded-lg shadow-inner border border-indigo-100">
+            <p className="text-gray-800 leading-relaxed whitespace-pre-wrap">
+              {suggestion}
             </p>
           </div>
-        </div>
+        </section>
+
+        {/* Stats Grid */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Match Score Card with Pie Chart */}
+          <StatsCard
+            icon={<FaCode className="text-blue-600 w-5 h-5" />}
+            title="Match Score"
+          >
+            <div className="relative h-40">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={prepareChartData(stats.matchScore)}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={0}
+                    dataKey="value"
+                  >
+                    {prepareChartData(stats.matchScore).map((_, index) => (
+                      <Cell 
+                        key={`cell-${index}`}
+                        fill={CHART_COLORS[index % CHART_COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <text
+                    x="50%"
+                    y="50%"
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    className="text-2xl font-bold text-blue-800"
+                  >
+                    {stats.matchScore}%
+                  </text>
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </StatsCard>
+
+          {/* Key Skills Card */}
+          <StatsCard
+            icon={<FaCheckCircle className="text-green-600 w-5 h-5" />}
+            title="Key Skills"
+          >
+            <ul className="space-y-2">
+              {stats.keySkills.map((skill, index) => (
+                <li key={index} className="flex items-center">
+                  <span className="w-2 h-2 bg-green-600 rounded-full mr-2" />
+                  {skill}
+                </li>
+              ))}
+            </ul>
+          </StatsCard>
+
+          {/* Experience Summary Card */}
+          <StatsCard
+            icon={<FaTimesCircle className="text-purple-600 w-5 h-5" />}
+            title="Experience Summary"
+          >
+            <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+              {stats.experienceSummary}
+            </p>
+          </StatsCard>
+        </section>
       </div>
     </div>
   );

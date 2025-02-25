@@ -23,17 +23,17 @@ export async function GET(
       sessionOptions
     );
 
-    // if (!session.user) {
-    //   return NextResponse.json(
-    //     { success: false, error: "Unauthorized" },
-    //     { status: 401 }
-    //   );
-    // }
+    if (!session.user) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
 
     // Fetch the application record from the database
     const application = await prisma.application.findUnique({
       where: { id: applicationId },
-      include: { job: true },
+      include: { job: true,user: true },
     });
 
     if (!application) {
@@ -99,7 +99,7 @@ Output the response in the following JSON format:
       parsedResponse = { suggestion: responseText, stats: {} };
     }
 
-    return NextResponse.json({ success: true, ...parsedResponse }, { status: 200 });
+    return NextResponse.json({ success: true,job:application.job,user:application.user,application:application, ...parsedResponse }, { status: 200 });
   } catch (error: any) {
     console.error("Error in application analysis:", error);
     return NextResponse.json(

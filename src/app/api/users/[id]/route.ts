@@ -32,6 +32,9 @@ export async function PUT(
       if (!body.role) {
         return NextResponse.json({ error: 'Role is required' }, { status: 400 });
       }
+
+      console.log(body.role);
+      
   
       const updatedUser = await prisma.user.update({
         where: { id: userId },
