@@ -49,12 +49,12 @@ export default function JobListingPage() {
 
   const distinctLocations = React.useMemo(() => {
     if (!jobs || jobs.length === 0) return [];
-    return Array.from(new Set(jobs.map((job) => job.location)));
+    return Array.from(new Set(jobs?.map((job) => job.location)));
   }, [jobs]);
 
   const distinctCategories = React.useMemo(() => {
     if (!jobs || jobs.length === 0) return [];
-    return Array.from(new Set(jobs.map((job) => job.category)));
+    return Array.from(new Set(jobs?.map((job) => job.category)));
   }, [jobs]);
 
   const filteredJobs = React.useMemo(() => {
@@ -133,7 +133,7 @@ export default function JobListingPage() {
                 className="border border-gray-300 p-2 rounded w-full"
               >
                 <option value="">All Locations</option>
-                {distinctLocations.map((loc) => (
+                {distinctLocations?.map((loc) => (
                   <option key={loc} value={loc}>
                     {loc}
                   </option>
@@ -149,7 +149,7 @@ export default function JobListingPage() {
                 className="border border-gray-300 p-2 rounded w-full"
               >
                 <option value="">All Categories</option>
-                {distinctCategories.map((cat) => (
+                {distinctCategories?.map((cat) => (
                   <option key={cat} value={cat}>
                     {cat}
                   </option>
@@ -181,7 +181,7 @@ export default function JobListingPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredJobs && filteredJobs.length > 0 ? (
-              filteredJobs.map((job:any) => (
+              filteredJobs?.map((job:any) => (
                 <div
                   key={job.id}
                   className="bg-white shadow rounded-lg p-6 hover:shadow-md transition-shadow flex flex-col justify-between"
