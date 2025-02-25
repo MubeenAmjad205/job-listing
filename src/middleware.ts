@@ -29,7 +29,7 @@ export const config = {
     '/api/auth/logout',
     '/user/dashboard',
     '/admin/dashboard',
-    '/api/jobs/:path*',
+    // '/api/jobs/:path*',
     '/api/applications/:path*',
     '/jobs/[id]/apply',
     '/jobs/[id]/edit',
