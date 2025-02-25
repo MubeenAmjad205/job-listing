@@ -13,7 +13,6 @@ import {
   FaTrash,
   FaInfoCircle,
 } from 'react-icons/fa';
-import RingLoader from 'react-spinners/RingLoader';
 import { useUser } from '@/context/UserContext';
 import { Job } from '@/types';
 import { toast, ToastContainer } from 'react-toastify';
@@ -172,7 +171,33 @@ export default function JobListingPage() {
 
         {jobsLoading || userLoading ? (
           <div className="flex items-center justify-center min-h-[200px]">
-            <RingLoader color="#4A90E2" size={60} />
+        <svg
+          width="100"
+          height="100"
+          viewBox="0 0 50 50"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="25"
+            cy="25"
+            r="20"
+            stroke="#00b4d8"
+            // stroke="#3498db"
+            strokeWidth="5"
+            fill="none"
+            strokeDasharray="100"
+            strokeDashoffset="50"
+          >
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              from="0 25 25"
+              to="360 25 25"
+              dur="1s"
+              repeatCount="indefinite"
+            />
+          </circle>
+        </svg>
           </div>
         ) : isError ? (
           <div className="text-center text-red-500 text-lg">
