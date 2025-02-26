@@ -26,13 +26,14 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
+    '/dashboard/user/:path*',
+    '/dashboard/admin/:path*',
     '/api/auth/logout',
-    '/user/dashboard',
-    '/admin/dashboard',
+    // '/admin/dashboard',
     // '/api/jobs/:path*',
     '/api/applications/:path*',
-    '/jobs/[id]/apply',
-    '/jobs/[id]/edit',
+    '/jobs/:id/apply',
+    '/jobs/:id/edit'
 
   ],
 };
