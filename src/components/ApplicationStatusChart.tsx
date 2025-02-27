@@ -24,7 +24,7 @@ const ApplicationStatusChart: React.FC<ApplicationStatusChartProps> = ({
     setMounted(true);
   }, []);
   
-  if (!mounted) return null;
+  if (!mounted) return <p>Loading...</p>;
   
   console.log("data from cahrt    ", data);
   

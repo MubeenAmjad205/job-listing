@@ -219,7 +219,7 @@ const AnalysisDashboard: React.FC<{ applicationId: any }> = ({ applicationId }) 
                     paddingAngle={0}
                     dataKey="value"
                   >
-                    {prepareChartData(stats.matchScore).map((_, index) => (
+                    {prepareChartData(stats.matchScore)?.map((_, index) => (
                       <Cell 
                         key={`cell-${index}`}
                         fill={CHART_COLORS[index % CHART_COLORS.length]}
@@ -254,7 +254,7 @@ const AnalysisDashboard: React.FC<{ applicationId: any }> = ({ applicationId }) 
                 <li className="text-gray-500">No relevant skills information provided.</li>):
                 (
                   <>
-              {stats.keySkills.map((skill, index) => (
+              {stats?.keySkills.map((skill, index) => (
                 <li key={index} className="flex items-center">
                   <span className="w-2 h-2 bg-green-600 rounded-full mr-2" />
                   {skill}

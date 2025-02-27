@@ -31,7 +31,7 @@ const ApplicationsList = () => {
       <h2 className="text-2xl font-bold text-gray-800 mb-4">Your Applications</h2>
       {data && data.length > 0 ? (
         <div className="space-y-4">
-          {data.map((app) => (
+          {data?.map((app) => (
             <ApplicationItem key={app.id} application={app} />
           ))}
         </div>

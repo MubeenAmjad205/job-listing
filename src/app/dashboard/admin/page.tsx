@@ -166,7 +166,7 @@ const AdminDashboard = () => {
         jobs.forEach((job: any) => {
             counts[job.category] = (counts[job?.category] || 0) + 1;
         });
-        return Object.keys(counts).map(category => ({ category, count: counts[category] }));
+        return Object.keys(counts)?.map(category => ({ category, count: counts[category] }));
     }, [jobs]);
 
     return (
@@ -316,7 +316,7 @@ const AdminDashboard = () => {
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
-                                    {applications.map((application: any) => (
+                                    {applications?.map((application: any) => (
                                         <tr key={application.id} className="hover:bg-gray-50 transition-colors">
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="flex items-center gap-3">
@@ -510,7 +510,7 @@ const AdminDashboard = () => {
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
-                                    {users.map((userItem) => (
+                                    {users?.map((userItem) => (
                                         <tr key={userItem.id} className="hover:bg-gray-50 transition-colors">
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                                 {userItem.name}

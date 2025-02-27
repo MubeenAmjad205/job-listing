@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import {  signOut } from 'next-auth/react';
+// import {  signOut } from 'next-auth/react';
 import { FaGithub, FaEnvelope } from 'react-icons/fa';
 import { useUser } from '@/context/UserContext';
 import { useRouter } from 'next/navigation';

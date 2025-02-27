@@ -23,7 +23,7 @@ const JobsByCategoryDonutChart: React.FC<JobsByCategoryDonutChartProps> = ({
     setMounted(true);
   }, []);
   
-  if (!mounted) return null;
+  if (!mounted) return <p>Loading...</p>;
   
   return (
     <PieChart width={300} height={300}>
@@ -38,12 +38,12 @@ const JobsByCategoryDonutChart: React.FC<JobsByCategoryDonutChartProps> = ({
         fill="#8884d8"
         label
       >
-        {data.map((entry, index) => (
+        {data?.map((entry, index) => (
           <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
         ))}
       </Pie>
       <Tooltip />
-      <Legend />
+      {/* <Legend  /> */}
     </PieChart>
   );
 };

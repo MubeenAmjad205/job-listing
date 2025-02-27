@@ -27,7 +27,7 @@ function extractTextFromPdf(buffer: Buffer): Promise<string> {
         // When done, resolve with the full text
         resolve(extractedText.trim());
       } else if (item.text) {
-        extractedText += item.text + " ";
+        extractedText += item.text + "";
       }
     });
   });
@@ -88,9 +88,10 @@ export async function GET(
     // console.log("Resume URL:", application.resume);
     const fileBuffer = await fetchFile(application.resume);
     let resumeText = await extractTextFromPdf(fileBuffer);
-    resumeText = resumeText.replace(/(\S) /g, '$1');
+    // resumeText = resumeText.replace(/(\S) /g, '$1');
     console.log("File Size:", resumeText.length);
-    console.log("Extracted Text (first 200 chars):", resumeText.slice(0, 200).replace(/(\S) /g, '$1'));
+    console.log("Extracted Text (first 200 chars):", resumeText.slice(0, 200));
+    // console.log("Extracted Text (first 200 chars):", resumeText.slice(0, 200).replace(/(\S) /g, '$1'));
 
     const coverLetter = application.coverLetter;
     const jobDescription = application.job?.description || application.jobTitle;
