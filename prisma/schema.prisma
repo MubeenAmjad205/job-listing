@@ -40,5 +40,5 @@ model Application {
   coverLetter String
   status      String   @default("pending")
   job         Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  user        User     @relation(fields: [userId], references: [id])
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
