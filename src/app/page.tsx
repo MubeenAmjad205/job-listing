@@ -1,15 +1,87 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-// import {  signOut } from 'next-auth/react';
 import { FaGithub, FaEnvelope } from 'react-icons/fa';
 import { useUser } from '@/context/UserContext';
 import { useRouter } from 'next/navigation';
+import client from '@/lib/contentfulClient';
+
+
+const fetchFeatures = async () => {
+  let response = await client.getEntries({
+    content_type: 'features',
+  });
+  
+  let finalResponse= response.items.map((item) =>{
+    return {
+      title: item.fields.title,
+      description: item.fields.shortDescription,
+      icon: item.fields.emoji,
+    };
+  });
+  // console.log('Response from fetchFeatures: ',finalResponse);
+  return finalResponse;
+};
+
+
+const fetchAbout = async () => {
+  let response = await client.getEntries({
+    content_type: 'about',
+  });
+  // console.log('Response from contentful: ',response);
+  
+  let finalResponse= response.items.map((item) =>{
+    return {
+
+      description: item.fields.description,
+      techStack: item.fields.techStack,
+    };
+  });
+  // console.log('Response from fetchAbout: ',finalResponse);
+  return finalResponse[0];
+};
+const fetchGetInTouch = async () => {
+  let response = await client.getEntries({
+    content_type: 'getInTouch',
+  });
+  // console.log('Response from fetchGetInTouch: ',response);
+  
+  let finalResponse= response.items.map((item) =>{
+    return   item.fields.description
+    
+  });
+  // console.log('Response from fetchGetInTouch: ',finalResponse[0]);
+  return finalResponse[0];
+};
+fetchGetInTouch(  );
 
 const HomePage = () => {
+
+
+
+
   const { user , logout} = useUser();
+  const [features, setFeatures] = useState<any>([]);
+  const [about, setAbout] = useState<any>({});
+  const [getInTouch, setGetInTouch] = useState<any>('');
   const router = useRouter ();
+
+useEffect(() => {
+
+  const fetchContent =async ()=>{
+setAbout(await fetchAbout());
+ setFeatures(await fetchFeatures());
+ setGetInTouch(await fetchGetInTouch());
+ 
+}
+fetchContent(); 
+// console.log('About:',about);
+}, []);
+
+
+
+
   const handleLogout = async () => {
     await logout();
     router.push('/auth/login');
@@ -69,26 +141,9 @@ const HomePage = () => {
           Features
         </h2>
         <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-          {[
-            {
-              title: 'Job Search & Filter',
-              description:
-                'Easily search and filter through jobs based on category, location, and salary.',
-              icon: '🔍',
-            },
-            {
-              title: 'User & Admin Roles',
-              description:
-                'Role-based access control ensures users and admins have appropriate permissions.',
-              icon: '👥',
-            },
-            {
-              title: 'Secure Authentication',
-              description:
-                'Robust authentication mechanisms keep user data safe and secure.',
-              icon: '🔒',
-            },
-          ].map((feature) => (
+          {
+          
+          features?.map((feature:any) => (
             <div
               key={feature.title}
               className="text-center p-6 bg-white rounded-lg shadow-lg text-indigo-600"
@@ -107,21 +162,14 @@ const HomePage = () => {
           About Jobify
         </h2>
         <p className="text-gray-600 text-lg leading-relaxed text-center max-w-3xl mx-auto">
-          Jobify is a full-stack job listing application built to bridge the gap between talented professionals and forward-thinking companies. Leveraging the latest technologies, we provide a platform that's intuitive, efficient, and user-centric.
+{about.description}
         </p>
         <div className="mt-12 flex flex-wrap justify-center">
           {/* Tech Stack Badges */}
-          {[
-            'Next.js',
-            'TypeScript',
-            'Tailwind CSS',
-            'React Query',
-            'Prisma ORM',
-            'PostgreSQL',
-            'Iron Session',
-            'React Hook Form',
-            'Zod',
-          ].map((tech) => (
+          {
+          
+         
+          about?.techStack?.map((tech:any) => (
             <span
               key={tech}
               className="bg-gray-200 text-gray-800 m-2 px-5 py-2 rounded-full text-sm font-medium"
@@ -139,7 +187,7 @@ const HomePage = () => {
             Get in Touch
           </h3>
           <p className="text-gray-600 mb-8">
-            We'd love to hear from you! Whether you have a question about features, trials, pricing, or anything else, our team is ready to answer all your questions.
+            {getInTouch}
           </p>
           <div className="flex justify-center space-x-8">
            <Link

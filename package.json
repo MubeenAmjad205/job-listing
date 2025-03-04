@@ -20,6 +20,8 @@
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.5.1",
+    "contentful": "^11.5.3",
+    "dotenv": "^16.4.7",
     "iron-session": "^8.0.4",
     "jsonwebtoken": "^9.0.2",
     "langchain": "^0.3.19",
